@@ -1,6 +1,6 @@
 {
   "name": "tutsplus-library",
-  "version": "0.0.0",
+  "version": "11.10.0",
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www"
