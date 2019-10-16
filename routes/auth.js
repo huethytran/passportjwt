@@ -35,14 +35,13 @@ function UserRegisterValidation(data, cb) {
         cb(null);
     });
 }
-
 router.post('/register',function (req, res, next) {
     var data = {
-        username: req.body.username,
-        password: req.body.password,
-        name: req.body.name,
-        age: req.body.age,
-        gender: req.body.gender
+        username: req.query.username,
+        password: req.query.password,
+        name: req.query.name,
+        age: req.query.age,
+        gender: req.query.gender
         
     };
 
