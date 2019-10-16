@@ -1,7 +1,10 @@
 {
   "name": "tutsplus-library",
-  "version": "11.10.0",
+  "version": "0.0.0",
   "private": true,
+  "engines": { 
+    "node": "11.10.4"
+ },
   "scripts": {
     "start": "nodemon ./bin/www"
   },
