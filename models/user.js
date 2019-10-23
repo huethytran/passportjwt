@@ -1,4 +1,4 @@
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var mongoose = require('mongoose');
 require('dotenv').config();
 var uri = process.env.DB_URI;

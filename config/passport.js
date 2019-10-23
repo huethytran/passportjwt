@@ -4,7 +4,7 @@ const passportJWT = require("passport-jwt");
 const JWTStrategy   = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 var UserModel = require("../models/user");
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 module.exports = function(passport) {
