@@ -36,6 +36,7 @@ passport.use(new JWTStrategy({
     secretOrKey   : process.env.SECRET_KEY
 },
 function (jwtPayload, done) {
+  console.log(jwtPayload._id);
     //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
     return UserModel.getFromId(jwtPayload._id, function (err, user){
         if (user)

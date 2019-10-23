@@ -29,6 +29,13 @@ app.use(session({secret: process.env.SECRET_KEY})); // chuối bí mật đã m�
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header("Access-Control-Allow-Methods", 'GET,HEAD,OPTIONS,POST,PUT');
+  res.header("Access-Control-Allow-Headers", 'Origin, Access-Control-Allow-Methods, X-Requested-With, Content-Type, Accept, Authorization ');
+  next();
+});
+
 app.use('/', index);
 app.use('/me', passport.authenticate('jwt', {session: false}), me);
 app.use('/user', auth);

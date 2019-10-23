@@ -5,7 +5,6 @@ const passport = require("passport");
 var UserDB = require("../models/user");
 /* POST login. */
 router.post('/login', function (req, res, next) {
-    
     passport.authenticate('local', (err, user, info) => {
         if (err || !user) {
             return next(err);
@@ -18,7 +17,6 @@ router.post('/login', function (req, res, next) {
            
            // generate a signed son web token with the contents of user object and return it in the response
            const token = jwt.sign({_id: user._id, username: user.username}, process.env.SECRET_KEY);
-
            return res.status(200).send({id: user._id, username: user.username, token});
         });
     })(req, res, next);
@@ -28,8 +26,8 @@ router.post('/login', function (req, res, next) {
 
 function UserRegisterValidation(data, cb) {
     UserDB.getFromUsername(data.username, function (err, data){
-        if (err)  return cb("Lỗi không xác định, vui lòng đăng ký lại!");
-        if (data) return cb("Username này đã được đăng ký, vui lòng sử dụng username khác!");
+        if (err)  return cb("Unknown error. Please register again!");
+        if (data) return cb("This username has already taken. Please use another one!");
         cb(null);
     });
 }
@@ -37,9 +35,7 @@ router.post('/register',function (req, res, next) {
     var data = {
         username: req.query.username,
         password: req.query.password,
-        name: req.query.name,
-        age: req.query.age,
-        gender: req.query.gender
+        email: req.query.email
         
     };
 
@@ -52,7 +48,7 @@ router.post('/register',function (req, res, next) {
                     console.log("[UserController] Failed to add user to database: " + err);
                     status = 500;
                     result.status = status;
-                    result.error = "Có lỗi trong quá trình tạo cơ sở dữ liệu, vui lòng thử lại!"
+                    result.error = "There was an error creating the database. Please try again!"
                     res.status(status).send(result);
                 } else {
                     console.log("[UserController] Success create user with ID: " + id);
@@ -65,7 +61,7 @@ router.post('/register',function (req, res, next) {
         } else {
             status = 406;
             result.status = status;
-            result.error = msg
+            result.error = msg;
             res.status(status).send(result);
         }
     })
