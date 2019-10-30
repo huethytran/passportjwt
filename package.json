@@ -24,10 +24,11 @@
     "mongoose": "^5.7.4",
     "morgan": "~1.9.1",
     "node": "^10.16.0",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pug": "2.0.0-beta11"
+    "pug": "2.0.0-beta11",
+    "socket.io": "^2.3.0"
   }
 }

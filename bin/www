@@ -20,12 +20,84 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-
+var io = require("socket.io")(server);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
+var room = null;
+var username = null;
 server.listen(port);
+io.on("connection", function(socket){
+  socket.on("Client-send-username", function(data){
+    console.log(data);
+    if (room === null && socket.room == null && data!= null) { 
+      room = socket.id;
+      username = data;
+      socket.room = room;
+      socket.username = data;
+      socket.join(room);
+      console.log(data, "is waiting at room",room);
+    }
+      if (room != null && socket.room == null && data!=null) {
+        console.log(data, "join", room);
+        socket.join(room);
+        socket.room = room;
+        socket.username = data;
+        socket.broadcast.in(room).emit("Already-found-player", data, true);
+        socket.emit("Already-found-player", username, false);
+        room = null;
+        username= null;   
+        console.log("room hiện có", socket.adapter.rooms);
+      }
+      if (data == null){
+        socket.emit("Send-username-failed");
+      }
+  });
+  socket.on("Client-send-tick-move", function(data){
+    console.log(socket.username, socket.id,"tick move", data, " send to room", socket.room);
+    socket.broadcast.in(socket.room).emit("Competitor-had-ticked", data);
+  });
+  socket.on("Client-send-request-undo", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-request-undo");
+  });
+  socket.on("Client-send-cancel-request-undo",function(){
+    socket.broadcast.in(socket.room).emit("Competitor-cancel-request-undo");
+  })
+  socket.on("Client-send-accept-undo", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-accept-undo");
+  });
+  socket.on("Client-send-reject-undo", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-reject-undo");
+  });
+  socket.on("Client-send-request-replay", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-request-replay");
+  });
+  socket.on("Client-send-accept-replay", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-accept-replay");
+  });
+  socket.on("Client-send-reject-replay", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-reject-replay");
+  });
+  socket.on("Client-send-message", function(message){
+    socket.broadcast.in(socket.room).emit("Competitor-send-message", message);
+  });
+  socket.on("Client-logout",function(){
+    socket.disconnect(true);
+  })
+  socket.on("Client-send-leave-room", function(){
+    socket.leave(socket.id);
+      socket.leave(socket.room);
+      console.log(socket.username,"leave room", socket.room);
+      socket.room = null;
+  });
+  socket.on("disconnect", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-out-game");
+    if (room === socket.room) room = null;
+    if (username === socket.username) username = null;
+    console.log("disconnect", socket.id);
+  });
+  console.log("all room", socket.adapter.rooms);
+})
 server.on('error', onError);
 server.on('listening', onListening);
 

@@ -39,6 +39,7 @@ app.use((req, res, next) => {
 app.use('/', index);
 app.use('/me', passport.authenticate('jwt', {session: false}), me);
 app.use('/user', auth);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
