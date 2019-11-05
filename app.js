@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
+var cors = require('cors');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session =  require('express-session');
@@ -28,14 +29,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: process.env.SECRET_KEY})); // chuối bí mật đã mã hóa coookie
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header("Access-Control-Allow-Methods", 'GET,HEAD,OPTIONS,POST,PUT');
   res.header("Access-Control-Allow-Headers", 'Origin, Access-Control-Allow-Methods, X-Requested-With, Content-Type, Accept, Authorization ');
   next();
 });
-
+var corsOption = {
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  exposedHeaders: ['x-auth-token']
+};
+app.use(cors(corsOption));
 app.use('/', index);
 app.use('/me', passport.authenticate('jwt', {session: false}), me);
 app.use('/user', auth);

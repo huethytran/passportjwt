@@ -1,72 +1,28 @@
 const express = require('express');
 const router  = express.Router();
-const jwt = require('jsonwebtoken');
-const passport = require("passport");
-var UserDB = require("../models/user");
+const controller = require("../controller/auth");
 /* POST login. */
-router.post('/login', function (req, res, next) {
-    passport.authenticate('local', (err, user, info) => {
-        if (err || !user) {
-            return next(err);
+router.post('/login', controller.login);
+
+router.post('/register', controller.register);
+    router.post('/changepassword',controller.validateToken, controller.changePassword);
+    router.post('/updateinfo', controller.validateToken, controller.updateinfo);
+    router.post('/forgotpassword', controller.forgotpassword);
+    router.post('/uploadavatar', controller.validateToken, controller.avatar);
+    router.get('/getinfo', controller.validateToken, controller.getinfo);
+    router.post('/facebook', controller.loginFacebook );
+    router.post('/google', controller.loginGoogle );
+/*router.route('/auth/google')
+    .post(passport.authenticate('google-token', {session: false}), function(req, res, next) {
+        if (!req.user) {
+            return res.send(401, 'User Not Authenticated');
         }
-       req.login(user, (err) => {
-           var result = {};
-           if (err) {
-            return next(err);
-           }
-           
-           // generate a signed son web token with the contents of user object and return it in the response
-           const token = jwt.sign({_id: user._id, username: user.username}, process.env.SECRET_KEY);
-           return res.status(200).send({id: user._id, username: user.username, token});
-        });
-    })(req, res, next);
-       
-});
+        req.auth = {
+            id: req.user.id
+        };
 
-
-function UserRegisterValidation(data, cb) {
-    UserDB.getFromUsername(data.username, function (err, data){
-        if (err)  return cb("Unknown error. Please register again!");
-        if (data) return cb("This username has already taken. Please use another one!");
-        cb(null);
-    });
-}
-router.post('/register',function (req, res, next) {
-    var data = {
-        username: req.query.username,
-        password: req.query.password,
-        email: req.query.email
-        
-    };
-
-    var result = {};
-    var status = 200;
-    UserRegisterValidation(data, function (msg) {
-        if (msg == null) {
-            UserDB.create(data, function (err, id) {
-                if (err) {
-                    console.log("[UserController] Failed to add user to database: " + err);
-                    status = 500;
-                    result.status = status;
-                    result.error = "There was an error creating the database. Please try again!"
-                    res.status(status).send(result);
-                } else {
-                    console.log("[UserController] Success create user with ID: " + id);
-                    status = 200;
-                    result.status = status;
-                    result.id = id;
-                    res.status(status).send(result);
-                }
-            });
-        } else {
-            status = 406;
-            result.status = status;
-            result.error = msg;
-            res.status(status).send(result);
-        }
-    })
-});
-
+        next();
+    }, generateToken, sendToken);*/
 
 
 module.exports = router;

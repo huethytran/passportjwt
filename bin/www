@@ -78,6 +78,16 @@ io.on("connection", function(socket){
   socket.on("Client-send-reject-replay", function(){
     socket.broadcast.in(socket.room).emit("Competitor-reject-replay");
   });
+  socket.on("Client-send-request", function(type){
+    console.log("heloooooo");
+    socket.broadcast.in(socket.room).emit("Competitor-request", type);
+  });
+  socket.on("Client-send-accept-request", function(type){
+    socket.broadcast.in(socket.room).emit("Competitor-accept-request", type);
+  });
+  socket.on("Client-send-reject-request", function(){
+    socket.broadcast.in(socket.room).emit("Competitor-reject-request");
+  });
   socket.on("Client-send-message", function(message){
     socket.broadcast.in(socket.room).emit("Competitor-send-message", message);
   });
